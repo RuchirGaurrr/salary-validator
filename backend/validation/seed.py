@@ -31,14 +31,29 @@ except ImportError:
         "    (it's already in requirements.txt)"
     )
 
-from sample_data import (
-    ALL_SUBMISSIONS,
-    VALID_SUBMISSIONS,
-    FAKE_SUBMISSIONS,
-    SUSPICIOUS_SUBMISSIONS,
-    EDGE_CASE_SUBMISSIONS,
-    get_clean_submissions,
-)
+import os
+
+# ── Load submissions from seed_data.json (works from any working directory) ──
+_HERE = os.path.dirname(os.path.abspath(__file__))
+_JSON_PATH = os.path.join(_HERE, "seed_data.json")
+
+with open(_JSON_PATH) as _f:
+    _RAW = json.load(_f)
+
+# Recreate the category splits by index (matches sample_data.py order):
+#   0–4   = valid (5 entries)
+#   5–8   = suspicious (4 entries)
+#   9–11  = fake (3 entries)
+#   12–14 = edge cases (3 entries)
+VALID_SUBMISSIONS      = _RAW[0:5]
+SUSPICIOUS_SUBMISSIONS = _RAW[5:9]
+FAKE_SUBMISSIONS       = _RAW[9:12]
+EDGE_CASE_SUBMISSIONS  = _RAW[12:15]
+ALL_SUBMISSIONS        = _RAW
+
+def get_clean_submissions(submission_list: list) -> list:
+    """Already clean — JSON has no _label keys."""
+    return submission_list
 
 # ── ANSI colour helpers (degrade gracefully on Windows) ──────────────────────
 _SUPPORTS_COLOR = sys.stdout.isatty()
@@ -218,7 +233,7 @@ def main() -> None:
     total_failures += seed_individually(args.url, EDGE_CASE_SUBMISSIONS, args.delay)
 
     # ── Optional: Batch endpoint ─────────────────────────────────────────────
-    if args.batch: 
+    if args.batch:
         print_section_header("BONUS  —  BATCH ENDPOINT  (/api/submissions/batch/)")
         batch_payload = get_clean_submissions(VALID_SUBMISSIONS[:3])
         result = post_batch(args.url, batch_payload)
@@ -250,4 +265,4 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()  
+    main()
