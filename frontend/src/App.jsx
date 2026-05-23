@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 
-const API = "http://localhost:8000/api";
+const API = process.env.REACT_APP_API_URL || "http://localhost:8000/api";
 
 const scoreColor = (s) =>
   s >= 75 ? "text-emerald-400" : s >= 50 ? "text-amber-400" : "text-red-400";
@@ -84,6 +84,26 @@ function ResultPanel({ data }) {
   );
 }
 
+// ── Field is defined OUTSIDE SubmissionForm ────────────────────────────────
+// This is the fix for the single-character input bug.
+// When Field was inside SubmissionForm, every keystroke caused a re-render
+// which recreated Field as a new component, unmounting the input and losing focus.
+// Moving it outside means Field is defined once and never recreated.
+function Field({ label, id, type = "text", placeholder, value, onChange }) {
+  return (
+    <div className="flex flex-col gap-1.5">
+      <label className="text-[10px] uppercase tracking-widest text-zinc-600">{label}</label>
+      <input
+        type={type}
+        placeholder={placeholder}
+        value={value}
+        onChange={onChange}
+        className="bg-[#0d0d0f] border border-[#2a2a35] rounded-lg px-3 py-2 text-sm text-zinc-200 font-mono placeholder-zinc-700 focus:outline-none focus:border-violet-500 transition-colors"
+      />
+    </div>
+  );
+}
+
 function SubmissionForm({ onSubmitted }) {
   const empty = { name: "", email: "", company: "", title: "", level: "", location: "", years_of_experience: "", base_salary: "", bonus: "", stock_rsu: "", total_compensation: "" };
   const [form, setForm] = useState(empty);
@@ -120,32 +140,21 @@ function SubmissionForm({ onSubmitted }) {
     }
   };
 
-  const Field = ({ label, id, type = "text", placeholder }) => (
-    <div className="flex flex-col gap-1.5">
-      <label className="text-[10px] uppercase tracking-widest text-zinc-600">{label}</label>
-      <input
-        type={type} placeholder={placeholder} value={form[id]}
-        onChange={set(id)}
-        className="bg-[#0d0d0f] border border-[#2a2a35] rounded-lg px-3 py-2 text-sm text-zinc-200 font-mono placeholder-zinc-700 focus:outline-none focus:border-violet-500 transition-colors"
-      />
-    </div>
-  );
-
   return (
     <div className="bg-[#13131a] border border-[#2a2a35] rounded-xl p-6 mb-8">
       <div className="grid grid-cols-2 gap-4">
-        <Field label="Full Name" id="name" placeholder="Jane Smith" />
-        <Field label="Email" id="email" type="email" placeholder="jane@example.com" />
-        <Field label="Company" id="company" placeholder="Google" />
-        <Field label="Job Title" id="title" placeholder="Software Engineer" />
-        <Field label="Level" id="level" placeholder="L5" />
-        <Field label="Location" id="location" placeholder="Mountain View, CA" />
-        <Field label="Years of Experience" id="years_of_experience" type="number" placeholder="6" />
-        <Field label="Base Salary ($)" id="base_salary" type="number" placeholder="180000" />
-        <Field label="Bonus ($)" id="bonus" type="number" placeholder="30000" />
-        <Field label="Stock / RSU ($)" id="stock_rsu" type="number" placeholder="200000" />
+        <Field label="Full Name" id="name" placeholder="Jane Smith" value={form.name} onChange={set("name")} />
+        <Field label="Email" id="email" type="email" placeholder="jane@example.com" value={form.email} onChange={set("email")} />
+        <Field label="Company" id="company" placeholder="Google" value={form.company} onChange={set("company")} />
+        <Field label="Job Title" id="title" placeholder="Software Engineer" value={form.title} onChange={set("title")} />
+        <Field label="Level" id="level" placeholder="L5" value={form.level} onChange={set("level")} />
+        <Field label="Location" id="location" placeholder="Mountain View, CA" value={form.location} onChange={set("location")} />
+        <Field label="Years of Experience" id="years_of_experience" type="number" placeholder="6" value={form.years_of_experience} onChange={set("years_of_experience")} />
+        <Field label="Base Salary ($)" id="base_salary" type="number" placeholder="180000" value={form.base_salary} onChange={set("base_salary")} />
+        <Field label="Bonus ($)" id="bonus" type="number" placeholder="30000" value={form.bonus} onChange={set("bonus")} />
+        <Field label="Stock / RSU ($)" id="stock_rsu" type="number" placeholder="200000" value={form.stock_rsu} onChange={set("stock_rsu")} />
         <div className="col-span-2">
-          <Field label="Total Compensation ($)" id="total_compensation" type="number" placeholder="410000" />
+          <Field label="Total Compensation ($)" id="total_compensation" type="number" placeholder="410000" value={form.total_compensation} onChange={set("total_compensation")} />
         </div>
       </div>
 
