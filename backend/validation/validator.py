@@ -8,7 +8,6 @@ class RuleBasedValidator:
     """
 
     def __init__(self):
-        # Global catch-all constraints
         self.MAX_BASE_SALARY = 1000000  # $1M
         self.MIN_BASE_SALARY = 30000    # $30K (global lower bound)
         self.MAX_TOTAL_COMP = 5000000   # $5M
