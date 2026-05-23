@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 
-const API = process.env.REACT_APP_API_URL || "http://localhost:8000/api";
+const API = "https://salary-validator-backend1.onrender.com/api";
 
 const scoreColor = (s) =>
   s >= 75 ? "text-emerald-400" : s >= 50 ? "text-amber-400" : "text-red-400";
