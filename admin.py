@@ -25,7 +25,7 @@ import json
 
 # ── Import your model — adjust 'submissions.models' to match your app name ───
 # e.g. if your app is called 'api', use: from api.models import Submission
-from submissions.models import Submission   # ← change 'submissions' if needed
+from validation.models import Submission   # ← change 'submissions' if needed
 
 
 # ── Inline: show each flag as a row inside the detail page ──────────────────
