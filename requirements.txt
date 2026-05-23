@@ -1,0 +1,8 @@
+django>=4.2
+djangorestframework
+django-cors-headers
+whitenoise
+python-decouple
+google-genai
+python-dotenv
+requests

@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: salary-validator
+    env: python
+    buildCommand: pip install -r requirements.txt && cd backend && python manage.py migrate
+    startCommand: cd backend && gunicorn config.wsgi:application --bind 0.0.0.0:$PORT
+    envVars:
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: DJANGO_SECRET_KEY
+        sync: false
+      - key: ALLOWED_HOSTS
+        value: salary-validator.onrender.com
+      - key: DJANGO_DEBUG
+        value: False
